@@ -24,7 +24,7 @@ class DisposeSensitive
         $warnings = SensitiveModel::where('type', 'warning')->get();
         foreach ($map as $key => $value) {
             foreach ($warnings as $sensitive) {
-                if (strpos((string) $value, $sensitive->word) >= 0) {
+                if (strpos((string) $value, $sensitive->word) === false) {
                     continue;
                 }
 
@@ -45,7 +45,9 @@ class DisposeSensitive
         $map = array_map(function ($value) use ($replaces) {
             return strtr((string) $value, $replaces);
         }, $map);
+        $souceInput = $request->except($inputs);
         $request->replace($map);
+        $request->merge($souceInput);
 
         return $next($request);
     }

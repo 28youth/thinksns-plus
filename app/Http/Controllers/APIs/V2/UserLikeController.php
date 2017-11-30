@@ -10,11 +10,11 @@ class UserLikeController extends Controller
 {
     public function index(Request $request, ResponseContract $response, LikeModel $model)
     {
-        $limit = $request->query('limit', 20);
+        $limit = $request->query('limit', 15);
         $after = $request->query('after', false);
         $user = $request->user();
 
-        $likes = $model->with('likeable')
+        $likes = $model->with(['likeable', 'user'])
             ->where('target_user', $user->id)
             ->when($after, function ($query) use ($after) {
                 return $query->where('id', '<', $after);
